@@ -6,9 +6,9 @@ const API_BASE_URL = 'http://localhost:3000/api';
 const CabDataForm = () => {
   // State for selectors
   const [cabs, setCabs] = useState([]);
-  const [selectedCab, setSelectedCab] = useState('');
   const [selectedDate, setSelectedDate] = useState('');
-  const [selectedType, setSelectedType] = useState('trips');
+  const [selectedCab, setSelectedCab] = useState('');
+  const [selectedType, setSelectedType] = useState('');
 
   // State for form data
   const [formData, setFormData] = useState({});
@@ -35,9 +35,6 @@ const CabDataForm = () => {
       if (!response.ok) throw new Error('Failed to fetch cabs');
       const data = await response.json();
       setCabs(data);
-      if (data.length > 0) {
-        setSelectedCab(data[0].service_number);
-      }
     } catch (err) {
       setError(`Error fetching cabs: ${err.message}`);
     }
@@ -47,8 +44,10 @@ const CabDataForm = () => {
     setLoading(true);
     setError('');
     try {
+      // Map selectedType to API type
+      const apiType = selectedType === 'expenses' ? 'fuel' : selectedType;
       const response = await fetch(
-        `${API_BASE_URL}/cab-data?type=${selectedType}&date=${selectedDate}&cab_number=${selectedCab}`
+        `${API_BASE_URL}/cab-data?type=${apiType}&date=${selectedDate}&cab_number=${selectedCab}`
       );
       if (!response.ok) throw new Error('Failed to fetch data');
       const data = await response.json();
@@ -67,8 +66,10 @@ const CabDataForm = () => {
     setSuccessMessage('');
 
     try {
+      // Map selectedType to API type
+      const apiType = selectedType === 'expenses' ? 'fuel' : selectedType;
       const payload = {
-        type: selectedType,
+        type: apiType,
         cab_number: selectedCab,
         date: selectedDate,
         ...formData,
@@ -122,9 +123,10 @@ const CabDataForm = () => {
               <input
                 type="number"
                 id="total_trips"
-                value={formData.total_trips || 0}
+                value={formData.total_trips || ''}
                 onChange={(e) => handleInputChange('total_trips', parseInt(e.target.value) || 0)}
                 required
+                min="0"
               />
             </div>
             <div className="form-group">
@@ -133,15 +135,16 @@ const CabDataForm = () => {
                 type="number"
                 step="0.01"
                 id="distance_km"
-                value={formData.distance_km || 0}
+                value={formData.distance_km || ''}
                 onChange={(e) => handleInputChange('distance_km', parseFloat(e.target.value) || 0)}
                 required
+                min="0"
               />
             </div>
           </>
         );
 
-      case 'fuel':
+      case 'expenses':
         return (
           <>
             <div className="form-group">
@@ -150,23 +153,44 @@ const CabDataForm = () => {
                 type="number"
                 step="0.01"
                 id="amount"
-                value={formData.amount || 0}
+                value={formData.amount || ''}
                 onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
                 required
+                min="0"
               />
             </div>
+            
             <div className="form-group">
-              <label htmlFor="subtype">Fuel Subtype</label>
+              <label htmlFor="type">Expense Type</label>
               <select
-                id="subtype"
-                value={formData.subtype || 'petrol'}
-                onChange={(e) => handleInputChange('subtype', e.target.value)}
+                id="type"
+                value={formData.type || ''}
+                onChange={(e) => handleInputChange('type', e.target.value)}
+                required
               >
-                <option value="petrol">Petrol</option>
-                <option value="diesel">Diesel</option>
-                <option value="cng">CNG</option>
+                <option value="">Select Type</option>
+                <option value="fuel">Fuel</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="others">Others</option>
               </select>
             </div>
+
+            {formData.type === 'fuel' && (
+              <div className="form-group">
+                <label htmlFor="subtype">Fuel Subtype</label>
+                <select
+                  id="subtype"
+                  value={formData.subtype || ''}
+                  onChange={(e) => handleInputChange('subtype', e.target.value)}
+                  required
+                >
+                  <option value="">Select Fuel Type</option>
+                  <option value="petrol">Petrol</option>
+                  <option value="cng">CNG</option>
+                </select>
+              </div>
+            )}
+            
             <div className="form-group">
               <label htmlFor="comments">Comments</label>
               <textarea
@@ -174,8 +198,10 @@ const CabDataForm = () => {
                 value={formData.comments || ''}
                 onChange={(e) => handleInputChange('comments', e.target.value)}
                 rows="3"
+                placeholder="Optional comments..."
               />
             </div>
+            
             <div className="form-group">
               <label htmlFor="paid_by">Paid By</label>
               <input
@@ -183,6 +209,7 @@ const CabDataForm = () => {
                 id="paid_by"
                 value={formData.paid_by || ''}
                 onChange={(e) => handleInputChange('paid_by', e.target.value)}
+                placeholder="Who paid for this expense?"
               />
             </div>
           </>
@@ -191,14 +218,15 @@ const CabDataForm = () => {
       case 'payments':
         return (
           <div className="form-group">
-            <label htmlFor="amount">Amount</label>
+            <label htmlFor="amount">Payment Amount</label>
             <input
               type="number"
               step="0.01"
               id="amount"
-              value={formData.amount || 0}
+              value={formData.amount || ''}
               onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
               required
+              min="0"
             />
           </div>
         );
@@ -207,14 +235,15 @@ const CabDataForm = () => {
         return (
           <>
             <div className="form-group">
-              <label htmlFor="amount">Amount</label>
+              <label htmlFor="amount">Salary Amount</label>
               <input
                 type="number"
                 step="0.01"
                 id="amount"
-                value={formData.amount || 0}
+                value={formData.amount || ''}
                 onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
                 required
+                min="0"
               />
             </div>
             <div className="form-group">
@@ -224,6 +253,7 @@ const CabDataForm = () => {
                 id="paid_by"
                 value={formData.paid_by || ''}
                 onChange={(e) => handleInputChange('paid_by', e.target.value)}
+                placeholder="Who paid the salary?"
               />
             </div>
           </>
@@ -246,26 +276,6 @@ const CabDataForm = () => {
         
         <div className="selectors-grid">
           <div className="form-group">
-            <label htmlFor="cab">Cab</label>
-            <select
-              id="cab"
-              value={selectedCab}
-              onChange={(e) => setSelectedCab(e.target.value)}
-              disabled={cabs.length === 0}
-            >
-              {cabs.length === 0 ? (
-                <option>Loading cabs...</option>
-              ) : (
-                cabs.map((cab) => (
-                  <option key={cab.id} value={cab.service_number}>
-                    {cab.service_number} - {cab.driver_name}
-                  </option>
-                ))
-              )}
-            </select>
-          </div>
-
-          <div className="form-group">
             <label htmlFor="date">Date</label>
             <input
               type="date"
@@ -277,25 +287,48 @@ const CabDataForm = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="type">Type</label>
+            <label htmlFor="cab">Cab</label>
+            <select
+              id="cab"
+              value={selectedCab}
+              onChange={(e) => setSelectedCab(e.target.value)}
+              disabled={cabs.length === 0}
+            >
+              <option value="">Select Cab</option>
+              {cabs.length === 0 ? (
+                <option disabled>Loading cabs...</option>
+              ) : (
+                cabs.map((cab) => (
+                  <option key={cab.id} value={cab.service_number}>
+                    {cab.service_number} - {cab.driver_name}
+                  </option>
+                ))
+              )}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="type">Category</label>
             <select
               id="type"
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
+              required
             >
+              <option value="">Select Category</option>
               <option value="trips">Trips</option>
-              <option value="fuel">Expense (Fuel)</option>
+              <option value="expenses">Expenses</option>
               <option value="payments">Payments</option>
-              <option value="salaries">Salary</option>
+              <option value="salaries">Salaries</option>
             </select>
           </div>
         </div>
       </div>
 
-      {selectedCab && selectedDate && (
+      {selectedCab && selectedDate && selectedType && (
         <form onSubmit={handleSubmit} className="data-form-section">
           <h2>
-            {formData.id ? 'Update' : 'Create'} {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} Data
+            {formData.id ? 'Update' : 'Create'} {selectedType.charAt(0).toUpperCase() + selectedType.slice(1)} Entry
           </h2>
           
           {loading && <div className="loading">Loading...</div>}
