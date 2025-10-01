@@ -1,24 +1,37 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
 import './App.css';
+import CabDataForm from './CabDataForm';
+import Dashboard from './Dashboard';
 
 function App() {
+  const [activeTab, setActiveTab] = useState('dashboard');
+
+  const tabs = [
+    { id: 'dashboard', label: 'Dashboard', component: <Dashboard /> },
+    { id: 'entries', label: 'Daily Entries', component: <CabDataForm /> }
+  ];
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div className="tab-container">
+        <div className="tab-header">
+          <div className="tab-list">
+            {tabs.map((tab) => (
+              <button
+                key={tab.id}
+                className={`tab-button ${activeTab === tab.id ? 'active' : ''}`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
+        </div>
+        
+        <div className="tab-content">
+          {tabs.find(tab => tab.id === activeTab)?.component}
+        </div>
+      </div>
     </div>
   );
 }
