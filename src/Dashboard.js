@@ -98,8 +98,9 @@ const Dashboard = () => {
       [monthNumber]: !prev[monthNumber],
     }));
     
-    // Fetch daily data if expanding and not already loaded
+    // When expanding a row, set it as selected month and fetch daily data
     if (!expandedRows[monthNumber] && monthlySummary) {
+      setSelectedMonth(monthNumber);
       fetchDailySummary(monthlySummary.year, monthNumber, selectedCabId);
     }
   };
