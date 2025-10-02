@@ -54,8 +54,8 @@ const CabDataForm = () => {
       if (!response.ok) throw new Error('Failed to fetch data');
       const data = await response.json();
       
-      // Check if this is an existing entry with amount data
-      const hasExisting = data.id && (data.amount > 0 || data.total_trips > 0);
+      // Check if this is an existing entry (has valid ID from database)
+      const hasExisting = data.id && data.id !== null && data.id !== '';
       setHasExistingEntry(hasExisting);
       
       if (hasExisting) {
