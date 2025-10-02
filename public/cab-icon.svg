@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background circle -->
+  <circle cx="256" cy="256" r="240" fill="#2E86AB" stroke="#1B5E7F" stroke-width="8"/>
+  
+  <!-- CL Text -->
+  <text x="256" y="280" text-anchor="middle" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="160" font-weight="bold">CL</text>
+  
+  <!-- Small car symbol at bottom -->
+  <g transform="translate(256, 380) scale(0.8)">
+    <!-- Car body -->
+    <ellipse cx="0" cy="0" rx="50" ry="20" fill="#FFFFFF"/>
+    
+    <!-- Car roof -->
+    <ellipse cx="0" cy="-15" rx="35" ry="15" fill="#E8E8E8"/>
+    
+    <!-- Wheels -->
+    <circle cx="-25" cy="15" r="8" fill="#333333"/>
+    <circle cx="25" cy="15" r="8" fill="#333333"/>
+    
+    <!-- Headlights -->
+    <circle cx="-45" cy="0" r="3" fill="#FFE135"/>
+    <circle cx="45" cy="0" r="3" fill="#FF6B6B"/>
+  </g>
+</svg>
