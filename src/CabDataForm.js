@@ -90,11 +90,11 @@ const CabDataForm = () => {
       let finalAmount = formData.amount || 0;
       let finalTrips = formData.total_trips || 0;
       
-      if (hasExistingEntry && additionalAmount && parseFloat(additionalAmount) > 0) {
+      if (hasExistingEntry && additionalAmount && parseInt(additionalAmount) > 0) {
         if (selectedType === 'trips') {
-          finalTrips = (existingAmount || 0) + parseFloat(additionalAmount);
+          finalTrips = (existingAmount || 0) + parseInt(additionalAmount);
         } else {
-          finalAmount = (existingAmount || 0) + parseFloat(additionalAmount);
+          finalAmount = (existingAmount || 0) + parseInt(additionalAmount);
         }
       }
       
@@ -169,7 +169,7 @@ const CabDataForm = () => {
                   {additionalAmount && (
                     <div className="total-preview">
                       <span className="label">New Total:</span>
-                      <span className="value">{(existingAmount || 0) + (parseFloat(additionalAmount) || 0)}</span>
+                      <span className="value">{(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
                     </div>
                   )}
                 </div>
@@ -186,7 +186,7 @@ const CabDataForm = () => {
               <label htmlFor="distance_km">Distance (KM)</label>
               <input
                 type="number"
-                step="0.01"
+
                 id="distance_km"
                 value={formData.distance_km === 0 ? 0 : (formData.distance_km || '')}
                 onChange={(e) => handleInputChange('distance_km', e.target.value === '' ? '' : parseFloat(e.target.value))}
@@ -208,7 +208,7 @@ const CabDataForm = () => {
                   </div>
                   <input
                     type="number"
-                    step="0.01"
+    
                     id="additional_amount"
                     value={additionalAmount}
                     onChange={(e) => setAdditionalAmount(e.target.value)}
@@ -217,17 +217,17 @@ const CabDataForm = () => {
                   {additionalAmount && (
                     <div className="total-preview">
                       <span className="label">New Total:</span>
-                      <span className="value">₹{(existingAmount || 0) + (parseFloat(additionalAmount) || 0)}</span>
+                      <span className="value">₹{(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
                     </div>
                   )}
                 </div>
               ) : (
                 <input
                   type="number"
-                  step="0.01"
+  
                   id="amount"
                   value={formData.amount === 0 ? 0 : (formData.amount || '')}
-                  onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                  onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseInt(e.target.value))}
                 />
               )}
             </div>
@@ -297,7 +297,7 @@ const CabDataForm = () => {
                 </div>
                 <input
                   type="number"
-                  step="0.01"
+  
                   id="additional_amount"
                   value={additionalAmount}
                   onChange={(e) => setAdditionalAmount(e.target.value)}
@@ -306,17 +306,17 @@ const CabDataForm = () => {
                 {additionalAmount && (
                   <div className="total-preview">
                     <span className="label">New Total:</span>
-                    <span className="value">₹{(existingAmount || 0) + (parseFloat(additionalAmount) || 0)}</span>
+                    <span className="value">₹{(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
                   </div>
                 )}
               </div>
             ) : (
               <input
                 type="number"
-                step="0.01"
+
                 id="amount"
                 value={formData.amount === 0 ? 0 : (formData.amount || '')}
-                onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseInt(e.target.value))}
               />
             )}
           </div>
@@ -335,7 +335,7 @@ const CabDataForm = () => {
                   </div>
                   <input
                     type="number"
-                    step="0.01"
+    
                     id="additional_amount"
                     value={additionalAmount}
                     onChange={(e) => setAdditionalAmount(e.target.value)}
@@ -344,17 +344,17 @@ const CabDataForm = () => {
                   {additionalAmount && (
                     <div className="total-preview">
                       <span className="label">New Total:</span>
-                      <span className="value">₹{(existingAmount || 0) + (parseFloat(additionalAmount) || 0)}</span>
+                      <span className="value">₹{(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
                     </div>
                   )}
                 </div>
               ) : (
                 <input
                   type="number"
-                  step="0.01"
+  
                   id="amount"
                   value={formData.amount === 0 ? 0 : (formData.amount || '')}
-                  onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                  onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseInt(e.target.value))}
                 />
               )}
             </div>
