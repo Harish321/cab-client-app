@@ -122,10 +122,8 @@ const CabDataForm = () => {
               <input
                 type="number"
                 id="total_trips"
-                value={formData.total_trips || ''}
-                onChange={(e) => handleInputChange('total_trips', parseInt(e.target.value) || 0)}
-                required
-                min="0"
+                value={formData.total_trips === 0 ? 0 : (formData.total_trips || '')}
+                onChange={(e) => handleInputChange('total_trips', e.target.value === '' ? '' : parseInt(e.target.value))}
               />
             </div>
             <div className="form-group">
@@ -134,10 +132,8 @@ const CabDataForm = () => {
                 type="number"
                 step="0.01"
                 id="distance_km"
-                value={formData.distance_km || ''}
-                onChange={(e) => handleInputChange('distance_km', parseFloat(e.target.value) || 0)}
-                required
-                min="0"
+                value={formData.distance_km === 0 ? 0 : (formData.distance_km || '')}
+                onChange={(e) => handleInputChange('distance_km', e.target.value === '' ? '' : parseFloat(e.target.value))}
               />
             </div>
           </>
@@ -152,10 +148,8 @@ const CabDataForm = () => {
                 type="number"
                 step="0.01"
                 id="amount"
-                value={formData.amount || ''}
-                onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
-                required
-                min="0"
+                value={formData.amount === 0 ? 0 : (formData.amount || '')}
+                onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
               />
             </div>
             
@@ -165,7 +159,6 @@ const CabDataForm = () => {
                 id="type"
                 value={formData.type || ''}
                 onChange={(e) => handleInputChange('type', e.target.value)}
-                required
               >
                 <option value="">Select Type</option>
                 <option value="fuel">Fuel</option>
@@ -181,7 +174,6 @@ const CabDataForm = () => {
                   id="subtype"
                   value={formData.subtype || ''}
                   onChange={(e) => handleInputChange('subtype', e.target.value)}
-                  required
                 >
                   <option value="">Select Fuel Type</option>
                   <option value="petrol">Petrol</option>
@@ -222,10 +214,8 @@ const CabDataForm = () => {
               type="number"
               step="0.01"
               id="amount"
-              value={formData.amount || ''}
-              onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
-              required
-              min="0"
+              value={formData.amount === 0 ? 0 : (formData.amount || '')}
+              onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
             />
           </div>
         );
@@ -239,10 +229,8 @@ const CabDataForm = () => {
                 type="number"
                 step="0.01"
                 id="amount"
-                value={formData.amount || ''}
-                onChange={(e) => handleInputChange('amount', parseFloat(e.target.value) || 0)}
-                required
-                min="0"
+                value={formData.amount === 0 ? 0 : (formData.amount || '')}
+                onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
               />
             </div>
             <div className="form-group">
