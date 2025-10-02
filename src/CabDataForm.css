@@ -126,6 +126,84 @@
   letter-spacing: 0.5px;
 }
 
+/* Existing Entry Container */
+.existing-entry-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+}
+
+.existing-amount {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #e3f2fd;
+  border: 1px solid #2196f3;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+.existing-amount .label {
+  font-weight: 600;
+  color: #1976d2;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.existing-amount .value {
+  font-weight: 700;
+  color: #0d47a1;
+  font-size: 1rem;
+}
+
+.total-preview {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #e8f5e9;
+  border: 1px solid #4caf50;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.total-preview .label {
+  font-weight: 600;
+  color: #2e7d32;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.total-preview .value {
+  font-weight: 700;
+  color: #1b5e20;
+  font-size: 1.1rem;
+}
+
+.existing-entry-container input {
+  margin: 0;
+  border: 2px solid #ddd;
+  background-color: #ffffff;
+}
+
+.existing-entry-container input:focus {
+  border-color: #4CAF50;
+  box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.1);
+}
+
+.existing-entry-container input::placeholder {
+  color: #999;
+  font-style: italic;
+}
+
 /* Data Form Section */
 .data-form-section {
   background-color: #fafafa;

@@ -11,6 +11,9 @@ const CabDataForm = () => {
 
   // State for form data
   const [formData, setFormData] = useState({});
+  const [additionalAmount, setAdditionalAmount] = useState('');
+  const [existingAmount, setExistingAmount] = useState(0);
+  const [hasExistingEntry, setHasExistingEntry] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -50,6 +53,21 @@ const CabDataForm = () => {
       );
       if (!response.ok) throw new Error('Failed to fetch data');
       const data = await response.json();
+      
+      // Check if this is an existing entry with amount data
+      const hasExisting = data.id && (data.amount > 0 || data.total_trips > 0);
+      setHasExistingEntry(hasExisting);
+      
+      if (hasExisting) {
+        // Store existing amount for display and summation
+        setExistingAmount(data.amount || data.total_trips || 0);
+        // Clear additional amount when loading existing data
+        setAdditionalAmount('');
+      } else {
+        setExistingAmount(0);
+        setAdditionalAmount('');
+      }
+      
       setFormData(data);
     } catch (err) {
       setError(`Error fetching form data: ${err.message}`);
@@ -67,11 +85,26 @@ const CabDataForm = () => {
     try {
       // Map selectedType to API type
       const apiType = selectedType === 'expenses' ? 'fuel' : selectedType;
+      
+      // Handle amount summation for existing entries
+      let finalAmount = formData.amount || 0;
+      let finalTrips = formData.total_trips || 0;
+      
+      if (hasExistingEntry && additionalAmount && parseFloat(additionalAmount) > 0) {
+        if (selectedType === 'trips') {
+          finalTrips = (existingAmount || 0) + parseFloat(additionalAmount);
+        } else {
+          finalAmount = (existingAmount || 0) + parseFloat(additionalAmount);
+        }
+      }
+      
       const payload = {
         type: apiType,
         cab_number: selectedCab,
         date: selectedDate,
         ...formData,
+        // Override with summed amounts if applicable
+        ...(selectedType === 'trips' ? { total_trips: finalTrips } : { amount: finalAmount }),
         updated_by: 'user'
       };
 
@@ -119,12 +152,34 @@ const CabDataForm = () => {
           <>
             <div className="form-group">
               <label htmlFor="total_trips">Total Trips</label>
-              <input
-                type="number"
-                id="total_trips"
-                value={formData.total_trips === 0 ? 0 : (formData.total_trips || '')}
-                onChange={(e) => handleInputChange('total_trips', e.target.value === '' ? '' : parseInt(e.target.value))}
-              />
+              {hasExistingEntry ? (
+                <div className="existing-entry-container">
+                  <div className="existing-amount">
+                    <span className="label">Existing:</span>
+                    <span className="value">{existingAmount}</span>
+                  </div>
+                  <input
+                    type="number"
+                    id="additional_trips"
+                    value={additionalAmount}
+                    onChange={(e) => setAdditionalAmount(e.target.value)}
+                    placeholder="Additional trips to add"
+                  />
+                  {additionalAmount && (
+                    <div className="total-preview">
+                      <span className="label">New Total:</span>
+                      <span className="value">{(existingAmount || 0) + (parseFloat(additionalAmount) || 0)}</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <input
+                  type="number"
+                  id="total_trips"
+                  value={formData.total_trips === 0 ? 0 : (formData.total_trips || '')}
+                  onChange={(e) => handleInputChange('total_trips', e.target.value === '' ? '' : parseInt(e.target.value))}
+                />
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="distance_km">Distance (KM)</label>
@@ -144,13 +199,36 @@ const CabDataForm = () => {
           <>
             <div className="form-group">
               <label htmlFor="amount">Amount</label>
-              <input
-                type="number"
-                step="0.01"
-                id="amount"
-                value={formData.amount === 0 ? 0 : (formData.amount || '')}
-                onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
-              />
+              {hasExistingEntry ? (
+                <div className="existing-entry-container">
+                  <div className="existing-amount">
+                    <span className="label">Existing:</span>
+                    <span className="value">₹{existingAmount}</span>
+                  </div>
+                  <input
+                    type="number"
+                    step="0.01"
+                    id="additional_amount"
+                    value={additionalAmount}
+                    onChange={(e) => setAdditionalAmount(e.target.value)}
+                    placeholder="Additional amount to add"
+                  />
+                  {additionalAmount && (
+                    <div className="total-preview">
+                      <span className="label">New Total:</span>
+                      <span className="value">₹{(existingAmount || 0) + (parseFloat(additionalAmount) || 0)}</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <input
+                  type="number"
+                  step="0.01"
+                  id="amount"
+                  value={formData.amount === 0 ? 0 : (formData.amount || '')}
+                  onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                />
+              )}
             </div>
             
             <div className="form-group">
@@ -210,13 +288,36 @@ const CabDataForm = () => {
         return (
           <div className="form-group">
             <label htmlFor="amount">Payment Amount</label>
-            <input
-              type="number"
-              step="0.01"
-              id="amount"
-              value={formData.amount === 0 ? 0 : (formData.amount || '')}
-              onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
-            />
+            {hasExistingEntry ? (
+              <div className="existing-entry-container">
+                <div className="existing-amount">
+                  <span className="label">Existing:</span>
+                  <span className="value">₹{existingAmount}</span>
+                </div>
+                <input
+                  type="number"
+                  step="0.01"
+                  id="additional_amount"
+                  value={additionalAmount}
+                  onChange={(e) => setAdditionalAmount(e.target.value)}
+                  placeholder="Additional payment to add"
+                />
+                {additionalAmount && (
+                  <div className="total-preview">
+                    <span className="label">New Total:</span>
+                    <span className="value">₹{(existingAmount || 0) + (parseFloat(additionalAmount) || 0)}</span>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <input
+                type="number"
+                step="0.01"
+                id="amount"
+                value={formData.amount === 0 ? 0 : (formData.amount || '')}
+                onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
+              />
+            )}
           </div>
         );
 
@@ -225,13 +326,36 @@ const CabDataForm = () => {
           <>
             <div className="form-group">
               <label htmlFor="amount">Salary Amount</label>
-              <input
-                type="number"
-                step="0.01"
-                id="amount"
-                value={formData.amount === 0 ? 0 : (formData.amount || '')}
-                onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
-              />
+              {hasExistingEntry ? (
+                <div className="existing-entry-container">
+                  <div className="existing-amount">
+                    <span className="label">Existing:</span>
+                    <span className="value">₹{existingAmount}</span>
+                  </div>
+                  <input
+                    type="number"
+                    step="0.01"
+                    id="additional_amount"
+                    value={additionalAmount}
+                    onChange={(e) => setAdditionalAmount(e.target.value)}
+                    placeholder="Additional salary to add"
+                  />
+                  {additionalAmount && (
+                    <div className="total-preview">
+                      <span className="label">New Total:</span>
+                      <span className="value">₹{(existingAmount || 0) + (parseFloat(additionalAmount) || 0)}</span>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <input
+                  type="number"
+                  step="0.01"
+                  id="amount"
+                  value={formData.amount === 0 ? 0 : (formData.amount || '')}
+                  onChange={(e) => handleInputChange('amount', e.target.value === '' ? '' : parseFloat(e.target.value))}
+                />
+              )}
             </div>
             <div className="form-group">
               <label htmlFor="paid_by">Paid By</label>
