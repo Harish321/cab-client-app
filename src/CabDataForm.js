@@ -99,10 +99,11 @@ const CabDataForm = () => {
       }
       
       const payload = {
+        ...formData,
+        // Ensure selector values take precedence over formData
         type: apiType,
         cab_number: selectedCab,
         date: selectedDate,
-        ...formData,
         // Override with summed amounts if applicable
         ...(selectedType === 'trips' ? { total_trips: finalTrips } : { amount: finalAmount }),
         updated_by: 'user'
