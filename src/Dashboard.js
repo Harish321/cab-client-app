@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
-
-const API_BASE_URL = 'http://localhost:3000/api';
+import API_CONFIG from './config/api';
 
 const Dashboard = () => {
   const [cabs, setCabs] = useState([]);
@@ -31,7 +30,7 @@ const Dashboard = () => {
 
   const fetchCabs = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/cabs`);
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CABS}`);
       if (!response.ok) throw new Error('Failed to fetch cabs');
       const data = await response.json();
       setCabs(data);
@@ -45,8 +44,8 @@ const Dashboard = () => {
     setError('');
     try {
       const url = cabId === 'all' 
-        ? `${API_BASE_URL}/dashboard`
-        : `${API_BASE_URL}/dashboard?cab_id=${cabId}`;
+        ? `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DASHBOARD}`
+        : `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DASHBOARD}?cab_id=${cabId}`;
       
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch dashboard data');
@@ -64,8 +63,8 @@ const Dashboard = () => {
     setError('');
     try {
       const url = cabId === 'all'
-        ? `${API_BASE_URL}/dashboard/daily?year=${year}&month=${month}`
-        : `${API_BASE_URL}/dashboard/daily?year=${year}&month=${month}&cab_id=${cabId}`;
+        ? `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DASHBOARD_DAILY}?year=${year}&month=${month}`
+        : `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.DASHBOARD_DAILY}?year=${year}&month=${month}&cab_id=${cabId}`;
       
       const response = await fetch(url);
       if (!response.ok) throw new Error('Failed to fetch daily data');

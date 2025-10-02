@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './CabDataForm.css';
-
-const API_BASE_URL = 'http://localhost:3000/api';
+import API_CONFIG from './config/api';
 
 const CabDataForm = () => {
   // State for selectors
@@ -31,7 +30,7 @@ const CabDataForm = () => {
 
   const fetchCabs = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/cabs`);
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CABS}`);
       if (!response.ok) throw new Error('Failed to fetch cabs');
       const data = await response.json();
       setCabs(data);
@@ -47,7 +46,7 @@ const CabDataForm = () => {
       // Map selectedType to API type
       const apiType = selectedType === 'expenses' ? 'fuel' : selectedType;
       const response = await fetch(
-        `${API_BASE_URL}/cab-data?type=${apiType}&date=${selectedDate}&cab_number=${selectedCab}`
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CAB_DATA}?type=${apiType}&date=${selectedDate}&cab_number=${selectedCab}`
       );
       if (!response.ok) throw new Error('Failed to fetch data');
       const data = await response.json();
@@ -81,7 +80,7 @@ const CabDataForm = () => {
         payload.created_by = 'user';
       }
 
-      const response = await fetch(`${API_BASE_URL}/cab-data`, {
+      const response = await fetch(`${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CAB_DATA}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
