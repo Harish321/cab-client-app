@@ -46,10 +46,11 @@ const CabDataForm = () => {
     setLoading(true);
     setError('');
     try {
-      // Map selectedType to API type
-      const apiType = selectedType === 'expenses' ? 'fuel' : selectedType;
+      // Map selectedType to API category for fetching data
+      // Use 'expenses' as category for all expense types (fuel, maintenance, others)
+      const apiType = selectedType === 'expenses' ? 'expenses' : selectedType;
       const response = await fetch(
-        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CAB_DATA}?type=${apiType}&date=${selectedDate}&cab_number=${selectedCab}`
+        `${API_CONFIG.BASE_URL}${API_CONFIG.ENDPOINTS.CAB_DATA}?category=${apiType}&date=${selectedDate}&cab_number=${selectedCab}`
       );
       if (!response.ok) throw new Error('Failed to fetch data');
       const data = await response.json();
@@ -83,8 +84,10 @@ const CabDataForm = () => {
     setSuccessMessage('');
 
     try {
-      // Map selectedType to API type
-      const apiType = selectedType === 'expenses' ? 'fuel' : selectedType;
+      // Map selectedType to API category for submission
+      // Use 'expenses' as category for all expense types (fuel, maintenance, others)
+      // For other categories, use the selectedType directly
+      const apiType = selectedType === 'expenses' ? 'expenses' : selectedType;
       
       // Handle amount summation for existing entries
       let finalAmount = formData.amount || 0;
@@ -92,20 +95,46 @@ const CabDataForm = () => {
       
       if (hasExistingEntry && additionalAmount && parseInt(additionalAmount) > 0) {
         if (selectedType === 'trips') {
-          finalTrips = (existingAmount || 0) + parseInt(additionalAmount);
+          finalTrips = parseInt(existingAmount || 0) + parseInt(additionalAmount);
         } else {
-          finalAmount = (existingAmount || 0) + parseInt(additionalAmount);
+          finalAmount = parseInt(existingAmount || 0) + parseInt(additionalAmount);
+        }
+      }
+      
+      // Auto-generate comments for expense submissions
+      let updatedComments = formData.comments || '';
+      if (selectedType === 'expenses') {
+        const expenseType = formData.type || 'Unknown';
+        const amount = hasExistingEntry && additionalAmount ? finalAmount : (formData.amount || 0);
+        
+        // Generate comment entry
+        let commentEntry = '';
+        if (expenseType === 'fuel' && formData.subtype) {
+          // Format: "Fuel (Petrol): ₹500"
+          commentEntry = `${expenseType.charAt(0).toUpperCase() + expenseType.slice(1)} (${formData.subtype.charAt(0).toUpperCase() + formData.subtype.slice(1)}): ₹${amount}`;
+        } else {
+          // Format: "Maintenance: ₹300"
+          commentEntry = `${expenseType.charAt(0).toUpperCase() + expenseType.slice(1)}: ₹${amount}`;
+        }
+        
+        // Append to existing comments with proper formatting
+        if (updatedComments.trim()) {
+          updatedComments = updatedComments.trim() + '; ' + commentEntry;
+        } else {
+          updatedComments = commentEntry;
         }
       }
       
       const payload = {
         ...formData,
         // Ensure selector values take precedence over formData
-        type: apiType,
+        category: apiType,
         cab_number: selectedCab,
         date: selectedDate,
         // Override with summed amounts if applicable
         ...(selectedType === 'trips' ? { total_trips: finalTrips } : { amount: finalAmount }),
+        // Include auto-generated comments for expenses
+        comments: updatedComments,
         updated_by: 'user'
       };
 
@@ -169,7 +198,7 @@ const CabDataForm = () => {
                   {additionalAmount && (
                     <div className="total-preview">
                       <span className="label">New Total:</span>
-                      <span className="value">{(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
+                      <span className="value">{parseInt(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
                     </div>
                   )}
                 </div>
@@ -217,7 +246,7 @@ const CabDataForm = () => {
                   {additionalAmount && (
                     <div className="total-preview">
                       <span className="label">New Total:</span>
-                      <span className="value">₹{(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
+                      <span className="value">₹{parseInt(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
                     </div>
                   )}
                 </div>
@@ -344,7 +373,7 @@ const CabDataForm = () => {
                   {additionalAmount && (
                     <div className="total-preview">
                       <span className="label">New Total:</span>
-                      <span className="value">₹{(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
+                      <span className="value">₹{parseInt(existingAmount || 0) + (parseInt(additionalAmount) || 0)}</span>
                     </div>
                   )}
                 </div>
