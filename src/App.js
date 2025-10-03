@@ -5,10 +5,28 @@ import Dashboard from './Dashboard';
 
 function App() {
   const [activeTab, setActiveTab] = useState('dashboard');
+  const [editContext, setEditContext] = useState(null);
+
+  const handleEditEntry = (date, cabNumber) => {
+    setEditContext({ date, cabNumber });
+    setActiveTab('entries');
+  };
+
+  const clearEditContext = () => {
+    setEditContext(null);
+  };
 
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', component: <Dashboard /> },
-    { id: 'entries', label: 'Daily Entries', component: <CabDataForm /> }
+    { 
+      id: 'dashboard', 
+      label: 'Dashboard', 
+      component: <Dashboard onEditEntry={handleEditEntry} /> 
+    },
+    { 
+      id: 'entries', 
+      label: 'Daily Entries', 
+      component: <CabDataForm editContext={editContext} onClearContext={clearEditContext} /> 
+    }
   ];
 
   return (

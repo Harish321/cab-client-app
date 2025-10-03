@@ -1,5 +1,5 @@
 const API_CONFIG = {
-  BASE_URL: 'http://3.6.151.62:3000/api',
+  BASE_URL: 'http://127.0.0.1:3000/api',
   ENDPOINTS: {
     CABS: '/cabs',
     CAB_DATA: '/cab-data',

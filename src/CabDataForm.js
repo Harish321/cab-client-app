@@ -93,7 +93,7 @@ const CabDataForm = () => {
       let finalAmount = formData.amount || 0;
       let finalTrips = formData.total_trips || 0;
       
-      if (hasExistingEntry && additionalAmount && parseInt(additionalAmount) > 0) {
+      if (hasExistingEntry && (additionalAmount !== '' && additionalAmount !== null && additionalAmount !== undefined)) {
         if (selectedType === 'trips') {
           finalTrips = parseInt(existingAmount || 0) + parseInt(additionalAmount);
         } else {

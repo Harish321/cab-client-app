@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 import API_CONFIG from './config/api';
 
-const Dashboard = () => {
+const Dashboard = ({ onEditEntry }) => {
   const [cabs, setCabs] = useState([]);
   const [selectedCabId, setSelectedCabId] = useState('all');
   const [monthlySummary, setMonthlySummary] = useState(null);
@@ -118,6 +118,15 @@ const Dashboard = () => {
     return date.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' });
   };
 
+  const handleDailyEntryClick = (date) => {
+    // Only allow editing when a specific cab is selected (not 'all')
+    if (selectedCabId !== 'all' && onEditEntry) {
+      onEditEntry(date, selectedCabId);
+    }
+  };
+
+  const isRowClickable = selectedCabId !== 'all';
+
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
@@ -214,7 +223,12 @@ const Dashboard = () => {
                     </thead>
                     <tbody>
                       {dailySummary.daily_summary.map((day, index) => (
-                        <tr key={index}>
+                        <tr 
+                          key={index}
+                          className={isRowClickable ? 'clickable-row' : ''}
+                          onClick={() => handleDailyEntryClick(day.date)}
+                          style={{ cursor: isRowClickable ? 'pointer' : 'default' }}
+                        >
                           <td>{formatDate(day.date)}</td>
                           <td>{day.total_trips || 0}</td>
                           <td>{formatNumber(day.total_distance)} km</td>
@@ -302,7 +316,12 @@ const Dashboard = () => {
                             </thead>
                             <tbody>
                               {dailySummary.daily_summary.map((day, index) => (
-                                <tr key={index}>
+                                <tr 
+                                  key={index}
+                                  className={isRowClickable ? 'clickable-row' : ''}
+                                  onClick={() => handleDailyEntryClick(day.date)}
+                                  style={{ cursor: isRowClickable ? 'pointer' : 'default' }}
+                                >
                                   <td>{formatDate(day.date)}</td>
                                   <td>{day.total_trips || 0}</td>
                                   <td>{formatNumber(day.total_distance)}</td>
